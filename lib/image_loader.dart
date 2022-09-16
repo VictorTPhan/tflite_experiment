@@ -25,6 +25,7 @@ class _ImageLoaderState extends State<ImageLoader> {
 
   TextEditingController targetController = new TextEditingController();
   List<ImageData> images = [];
+  bool showImages = false;
 
   void imageSelection() async {
     await ImagePicker().pickMultiImage().
@@ -39,6 +40,13 @@ class _ImageLoaderState extends State<ImageLoader> {
     });
   }
 
+  void toggleImageVisibility()
+  {
+    setState(() {
+      showImages = !showImages;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -50,21 +58,24 @@ class _ImageLoaderState extends State<ImageLoader> {
         children: [
           Expanded(
             flex: 90,
-            child: ListView.separated(
+            child: ListView.builder(
               padding: const EdgeInsets.all(8),
               itemCount: images.length,
               itemBuilder: (BuildContext context, int index) {
                 return Container(
-                  height: 75,
+                  height: showImages? 75: 20,
                   color: Colors.blueGrey[100],
-                  child: Row(
-                    children: [
-                      images[index].imageWidget
-                    ],
-                  ),
+                  child: showImages
+                      ? images[index].imageWidget
+                      : Text(
+                          (index + 1).toString(),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18
+                          ),
+                        )
                 );
               },
-              separatorBuilder: (BuildContext context, int index) => const Divider(),
             ),
           ),
           Expanded(
@@ -75,7 +86,7 @@ class _ImageLoaderState extends State<ImageLoader> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
-                    width: 200,
+                    width: 150,
                     child: TextField(
                       controller: targetController,
                       decoration: const InputDecoration(
@@ -97,6 +108,22 @@ class _ImageLoaderState extends State<ImageLoader> {
                           onPressed: imageSelection,
                           child: Icon(Icons.add)
                       ),
+                      if (images.length > 1)
+                        FloatingActionButton(
+                            heroTag: null,
+                            onPressed: toggleImageVisibility,
+                            child: Icon(Icons.remove_red_eye_outlined)
+                        ),
+                      if (images.length > 1)
+                        FloatingActionButton(
+                            heroTag: null,
+                            onPressed: () {
+                              setState(() {
+                                images = [];
+                              });
+                            },
+                            child: Icon(Icons.delete)
+                        ),
                       if (images.length > 1 && targetController.text.isNotEmpty)
                         FloatingActionButton(
                             heroTag: null,

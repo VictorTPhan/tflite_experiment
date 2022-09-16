@@ -141,7 +141,7 @@ class _ResultsState extends State<Results> {
                 ),
               ),
               Text(
-                "Accuracy: ${"${result.accuracy.toString().substring(2, 4)}%"}",
+                "Accuracy: ${"${(result.accuracy*100).toString()}%"}",
                 style: const TextStyle(
                     fontSize: 18
                 ),
@@ -279,12 +279,12 @@ class _ResultsState extends State<Results> {
           ),
           Expanded(
             flex: 80,
-            child: ListView.separated(
+            child: ListView.builder(
               padding: const EdgeInsets.all(8),
               itemCount: classifications.length,
               itemBuilder: (BuildContext context, int index) {
                 return Container(
-                  height: 65,
+                  height: showImages? 65: 30,
                   color: classifications[index].label.contains(widget.target)?
                     Colors.green: Colors.red,
                   child: Row(
@@ -292,7 +292,7 @@ class _ResultsState extends State<Results> {
                     children: [
                       evenlySpacedWidget(
                         Text(
-                          index.toString(),
+                          (index + 1).toString(),
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold
@@ -326,7 +326,6 @@ class _ResultsState extends State<Results> {
                   ),
                 );
               },
-              separatorBuilder: (BuildContext context, int index) => const Divider(),
             ),
           ),
           Expanded(
